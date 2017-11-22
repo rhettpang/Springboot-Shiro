@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.test.shiro.mapper.PermissionMapper">
+  <resultMap id="permission" type="com.test.shiro.entity.Permission">
+    <id column="permissionId" jdbcType="INTEGER" property="permissionId" />
+    <result column="permission" jdbcType="VARCHAR" property="permission" />
+  </resultMap>
+
+  <resultMap id="role" type="com.test.shiro.entity.Role">
+    <id column="roleId" jdbcType="INTEGER" property="roleId" />
+    <result column="roleName" jdbcType="VARCHAR" property="roleName" />
+  </resultMap>
+
+    <insert id="save" parameterType="com.test.shiro.entity.Permission" useGeneratedKeys="true" keyProperty="permissionId">
+      INSERT INTO permission(permissionId,permission) VALUES (#{permissionId},#{permission})
+    </insert>
+
+    <select id="findPermissionAndRoleNameByUserId" resultMap="permission">
+
+      SELECT per.`permission`,role.roleName as roleName
+        FROM permission per LEFT JOIN rolepermission rp
+        ON per.permissionId = rp.`permissionId`
+        LEFT JOIN userrole ur
+        ON rp.`roleId` =ur.roleId
+        LEFT JOIN role role
+        ON role.`roleId`=rp.`roleId`
+        WHERE ur.userId=#{userId}
+    </select>
+
+</mapper>
